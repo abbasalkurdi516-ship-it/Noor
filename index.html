@@ -148,33 +148,36 @@ function render(data=surahs){
 
 function searchSurah(){
  const q=document.getElementById("search").value.trim();
- render(surahs.filter(x=>x.includes(q)));
-}
-
+ render(surahs.filter(x=>x.includes(q)));}
 function openSurah(name){
  list.style.display="none";
  document.querySelector(".search").style.display="none";
  detail.style.display="block";
  document.getElementById("title").textContent="سورەتی "+name;
 
- document.getElementById("ayahs").innerHTML=
- `<div class="ayah">
- ئەمە وەشانی سەرەتایی بەرنامەی نوورە.
- </div>
- <div class="ayah">
- لە وەشانی تەواودا دەقی تەواوی ئایەتەکانی ئەم سورەتە لێرە پیشان دەدرێت.
- </div>`;
+ const ayahs = {
+   "الفاتحة": [
+     "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+     "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+     "الرَّحْمَٰنِ الرَّحِيمِ",
+     "مَالِكِ يَوْمِ الدِّينِ",
+     "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+     "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+     "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ"
+   ]
+ };
+
+ const verses = ayahs[name];
+
+ if(verses){
+   document.getElementById("ayahs").innerHTML =
+     verses.map((ayah,i)=>
+       `<div class="ayah">${ayah} <span>﴿${i+1}﴾</span></div>`
+     ).join("");
+ }else{
+   document.getElementById("ayahs").innerHTML =
+     `<div class="ayah">دەقی ئەم سورەتە هێشتا زیاد نەکراوە.</div>`;
+ }
+
  window.scrollTo(0,0);
-}
-
-function showList(){
- detail.style.display="none";
- list.style.display="block";
- document.querySelector(".search").style.display="block";
-}
-
-render();
-</script>
-
-</body>
-</html>
+ }
