@@ -5,572 +5,623 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Noor</title>
+<title>قورئانی پیرۆز</title>
 
 <style>
 
+*{
+  box-sizing:border-box;
+}
+
 body{
- margin:0;
- font-family:Arial,sans-serif;
- background:#f5f5f5;
- color:#222;
+  margin:0;
+  background:#f4f6f5;
+  color:#222;
+  font-family:Tahoma,Arial,sans-serif;
 }
 
 header{
- background:#176b4d;
- color:white;
- padding:20px;
- text-align:center;
- font-size:28px;
- font-weight:bold;
+  background:#176b4d;
+  color:white;
+  padding:20px 12px;
+  text-align:center;
 }
 
-.search{
- padding:15px;
+header h1{
+  margin:0 0 15px;
+  font-size:25px;
 }
 
 #search{
- width:100%;
- box-sizing:border-box;
- padding:14px;
- border:1px solid #ccc;
- border-radius:10px;
- font-size:18px;
+  width:100%;
+  max-width:700px;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  font-size:18px;
+  outline:none;
+  direction:rtl;
 }
 
-#list{
- padding:10px;
+#status{
+  margin-top:10px;
+  font-size:14px;
 }
 
-.surah{
- background:white;
- margin:8px 0;
- padding:17px;
- border-radius:10px;
- display:flex;
- justify-content:space-between;
- cursor:pointer;
- font-size:20px;
- box-shadow:0 1px 4px #ddd;
-}
-
-.num{
- color:#176b4d;
- font-weight:bold;
-}
-
-.detail{
- display:none;
- padding:15px;
-}
-
-.back{
- background:#176b4d;
- color:white;
- border:0;
- padding:12px 18px;
- border-radius:8px;
- font-size:17px;
-}
-
-#title{
- text-align:center;
-}
-
-.ayah{
- background:white;
- margin:12px 0;
- padding:20px;
- border-radius:10px;
- font-size:23px;
- line-height:2;
- text-align:right;
+main{
+  max-width:850px;
+  margin:auto;
+  padding:15px;
 }
 
 .result{
- background:white;
- margin:10px 0;
- padding:15px;
- border-radius:10px;
- cursor:pointer;
- box-shadow:0 1px 4px #ddd;
+  background:white;
+  margin-bottom:10px;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 2px 7px rgba(0,0,0,.08);
+  cursor:pointer;
 }
 
-.result small{
- color:#176b4d;
- display:block;
- margin-bottom:8px;
- font-weight:bold;
+.result:active{
+  transform:scale(.99);
+}
+
+.small{
+  display:block;
+  color:#176b4d;
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.surah-name{
+  font-size:20px;
+  font-weight:bold;
+}
+
+.ayah{
+  font-family:"Amiri",Tahoma,Arial,sans-serif;
+  font-size:24px;
+  line-height:2.2;
+  text-align:right;
+}
+
+.title{
+  color:#176b4d;
+  font-size:25px;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:15px;
+}
+
+button{
+  background:#176b4d;
+  color:white;
+  border:none;
+  padding:11px 18px;
+  border-radius:10px;
+  font-size:16px;
+  margin-bottom:15px;
+}
+
+.empty{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  text-align:center;
+}
+
+.hidden{
+  display:none;
 }
 
 </style>
-
 </head>
+
 
 <body>
 
-<header>
-📖 نوور
-</header>
 
-<div class="search">
+<header>
+
+<h1>📖 قورئانی پیرۆز</h1>
 
 <input
- id="search"
- placeholder="گەڕان لە ناوی سورەت یان ئایەت..."
- oninput="searchAll()"
+  id="search"
+  type="search"
+  placeholder="لە قورئان بگەڕێ... نموونە: الله"
 >
 
+<div id="status">
+لە بارکردنی قورئان...
 </div>
+
+</header>
+
+
+<main>
+
+<button
+  id="backButton"
+  class="hidden"
+  onclick="showSurahs()"
+>
+↩ گەڕانەوە بۆ سورەتەکان
+</button>
 
 <div id="list"></div>
 
-<div id="detail" class="detail">
+</main>
 
-<button class="back" onclick="showList()">
-← گەڕانەوە
-</button>
 
-<h2 id="title"></h2>
-
-<div id="ayahs"></div>
-
-</div>
 
 <script>
 
-const surahs = [
 
-"الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف",
-"الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر",
-"النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون",
-"النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم",
-"لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر",
-"غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف",
-"محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر",
-"الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف",
-"الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم",
-"الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان",
-"المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين",
-"الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد",
-"الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة",
-"الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل",
-"قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص",
-"الفلق","الناس"
+/* =========================
+   گۆڕینی دەقی عەرەبی
+   ========================= */
 
-];
+function normalizeArabic(text){
+
+  return String(text)
+
+    .normalize("NFD")
+
+    /* سڕینەوەی حەرەکەت */
+    .replace(/[\u064B-\u065F\u0670]/g,"")
+
+    /* جۆرەکانی ئەلف */
+    .replace(/[إأٱآ]/g,"ا")
+
+    /* جۆرەکانی ی */
+    .replace(/[ى]/g,"ي")
+
+    /* جۆرەکانی و */
+    .replace(/[ؤ]/g,"و")
+
+    /* ة */
+    .replace(/[ة]/g,"ه")
+
+    /* ـ */
+    .replace(/[ـ]/g,"")
+
+    /* بۆشایی */
+    .replace(/\s+/g," ")
+
+    .trim();
+
+}
+
+
+
+/* =========================
+   گۆڕاوە سەرەکییەکان
+   ========================= */
+
+let quran = [];
 
 const list =
 document.getElementById("list");
 
-const detail =
-document.getElementById("detail");
+const search =
+document.getElementById("search");
 
-let allAyahs = [];
+const status =
+document.getElementById("status");
 
+const backButton =
+document.getElementById("backButton");
 
-/* لیستی سورەتەکان */
 
-function render(){
 
- list.innerHTML="";
+/* =========================
+   هێنانی قورئان
+   ========================= */
 
- surahs.forEach((name,i)=>{
-
-  const div =
-  document.createElement("div");
-
-  div.className="surah";
-
-  div.innerHTML =
-  `<span>${name}</span>
-   <span class="num">${i+1}</span>`;
-
-  div.onclick =
-  () => openSurah(name);
-
-  list.appendChild(div);
-
- });
-
-}
-
-
-/* کردنەوەی سورەت */
-
-async function openSurah(name){
-
- list.style.display="none";
-
- document.querySelector(".search")
- .style.display="none";
-
- detail.style.display="block";
-
- document.getElementById("title")
- .textContent="سورەتی "+name;
-
- const number =
- surahs.indexOf(name)+1;
-
- document.getElementById("ayahs")
- .innerHTML=
- `<div class="ayah">
- چاوەڕێ بکە... 📖
- </div>`;
-
- try{
-
-  const response =
-  await fetch(
-  "https://api.alquran.cloud/v1/surah/"
-  +number+
-  "/quran-uthmani"
-  );
-
-  const data =
-  await response.json();
-
-  const verses =
-  data.data.ayahs;
-
-  document.getElementById("ayahs")
-  .innerHTML=
-
-  verses.map(ayah=>`
-
-   <div class="ayah">
-
-   ${ayah.text}
-
-   ﴿${ayah.numberInSurah}﴾
-
-   </div>
-
-  `).join("");
-
- }catch(error){
-
-  document.getElementById("ayahs")
-  .innerHTML=
-  `<div class="ayah">
-  ببورە، دەقی سورەتەکە نەهێنرا.
-  </div>`;
-
- }
-
- window.scrollTo(0,0);
-
-}
-
-
-/* گەڕان */
-
-async function searchAll(){
-
- const q =
- document.getElementById("search")
- .value.trim();
-
- if(q===""){
-
-  detail.style.display="none";
-
-  list.style.display="block";
-
-  render();
-
-  return;
-
- }
-
-
- /* گەڕان لە ناوی سورەت */
-
- const names =
- surahs.filter(name =>
- name.includes(q)
- );
-
-
- list.innerHTML="";
-
-
- names.forEach(name=>{
-
-  const div =
-  document.createElement("div");
-
-  div.className="result";
-
-  div.innerHTML=
-  `<small>سورەت</small>
-   ${name}`;
-
-  div.onclick =
-  ()=>openSurah(name);
-
-  list.appendChild(div);
-
- });
-
-
- /* گەڕان لە ئایەتەکان */
-
- try{
-
-  if(allAyahs.length===0){
-
-   const response =
-   await fetch(
-   "https://api.alquran.cloud/v1/quran/quran-uthmani"
-   );
-
-   const data =
-   await response.json();
-
-   allAyahs =
-   data.data.surahs;
-
-  }
-
-  allAyahs.forEach(surah=>{
-
-   surah.ayahs.forEach(ayah=>{
-
-    if(
-    ayah.text.includes(q)
-    ){
-
-     const div =
-     document.createElement("div");
-
-     div.className="result";
-
-     div.innerHTML=
-
-     `<small>
-      سورەتی ${surah.name}
-      - ئایەتی ${ayah.numberInSurah}
-     </small>
-
-     ${ayah.text}`;
-
-     div.onclick =
-     ()=>openSurah(surah.name);
-
-     list.appendChild(div);
-
-    }
-
-   });
-
-  });
-
- }catch(error){
-
-  console.log(error);
-
- }
-
-}
-
-
-/* گەڕانەوە */
-
-async function searchAyahs(){
-
-  const q =
-    document.getElementById("search")
-    .value.trim();
-
-  if(q === ""){
-
-    detail.style.display = "none";
-    list.style.display = "block";
-
-    render();
-
-    return;
-  }
-
-  /*
-   * پاککردنەوەی نیشانەکانی عەرەبی
-   * بۆ ئەوەی "الله" و دەقی قورئان بە دروستی
-   * لەگەڵ یەکتر بەراورد بکرێن
-   */
-  function normalizeArabic(text){
-
-    return text
-      .normalize("NFD")
-
-      // حەرەکەتەکان
-      .replace(/[\u064B-\u065F\u0670]/g, "")
-
-      // شێوە جیاوازەکانی ئەلف
-      .replace(/[إأٱآ]/g, "ا")
-
-      // ى بۆ ی
-      .replace(/ى/g, "ي")
-
-      // ة بۆ ه
-      .replace(/ة/g, "ه")
-
-      // کۆمەڵێک نیشانەی زیادە
-      .replace(/[\u06D6-\u06ED]/g, "")
-
-      .replace(/\s+/g, " ")
-
-      .trim();
-  }
-
-
-  const searchText =
-    normalizeArabic(q);
-
-
-  /* =========================
-     گەڕان لە ناوی سورەتەکان
-     ========================= */
-
-  const names =
-    surahs.filter(name =>
-      normalizeArabic(name)
-        .includes(searchText)
-    );
-
-
-  list.innerHTML = "";
-
-
-  names.forEach(name => {
-
-    const div =
-      document.createElement("div");
-
-    div.className = "result";
-
-    div.innerHTML =
-      `<small>سورەت</small>
-       ${name}`;
-
-    div.onclick =
-      () => openSurah(name);
-
-    list.appendChild(div);
-
-  });
-
-
-  /* =========================
-     گەڕان لە ناو ئایەتەکان
-     ========================= */
+async function loadQuran(){
 
   try{
 
-    if(allAyahs.length === 0){
+    const response =
+    await fetch(
+      "https://api.alquran.cloud/v1/quran/quran-uthmani"
+    );
 
-      const response =
-        await fetch(
-          "https://api.alquran.cloud/v1/quran/quran-uthmani"
-        );
 
-      const data =
-        await response.json();
+    if(!response.ok){
 
-      allAyahs =
-        data.data.surahs;
+      throw new Error("Network error");
+
     }
 
 
-    allAyahs.forEach(surah => {
-
-      surah.ayahs.forEach(ayah => {
-
-        const ayahText =
-          normalizeArabic(ayah.text);
+    const data =
+    await response.json();
 
 
-        if(
-          ayahText.includes(searchText)
-        ){
-
-          const div =
-            document.createElement("div");
-
-          div.className = "result";
-
-          div.innerHTML =
-
-            `<small>
-              سورەتی ${surah.name}
-              - ئایەتی ${ayah.numberInSurah}
-            </small>
-
-            <div>${ayah.text}</div>`;
+    quran =
+    data.data.surahs;
 
 
-          div.onclick =
-            () => openSurah(surah.name);
+    status.innerText =
+      "قورئان ئامادەیە — ١١٤ سورەت";
 
 
-          list.appendChild(div);
-        }
-
-      });
-
-    });
-
-
-    /*
-     * ئەگەر هیچ ئەنجامێک نەدۆزرایەوە
-     */
-
-    if(list.children.length === 0){
-
-      list.innerHTML =
-        `<div class="result">
-          هیچ ئەنجامێک نەدۆزرایەوە.
-        </div>`;
-    }
+    showSurahs();
 
 
   }catch(error){
 
     console.log(error);
 
-    list.innerHTML =
-      `<div class="result">
-        هەڵەیەک لە گەڕانی ئایەتەکان ڕوویدا.
-      </div>`;
+
+    status.innerText =
+      "کێشەیەک ڕوویدا";
+
+
+    list.innerHTML = `
+
+      <div class="empty">
+
+        نەتوانرا قورئان بار بکرێت.
+
+        <br><br>
+
+        تکایە ئینتەرنێت بپشکنە.
+
+      </div>
+
+    `;
+
   }
 
 }
 
 
+
 /* =========================
-   گەڕانەوە بۆ لیستی سورەتەکان
+   پیشاندانی هەموو سورەتەکان
    ========================= */
 
-function showList(){
+function showSurahs(){
 
-  detail.style.display = "none";
+  search.value = "";
 
-  list.style.display = "block";
+  backButton.classList.add("hidden");
 
-  document.querySelector(".search")
-    .style.display = "block";
+  list.innerHTML = "";
 
-  document.getElementById("search")
-    .value = "";
 
-  render();
+  quran.forEach(function(surah){
+
+    const div =
+    document.createElement("div");
+
+
+    div.className =
+      "result";
+
+
+    div.innerHTML = `
+
+      <span class="small">
+        سورەتی ${surah.number}
+      </span>
+
+      <div class="surah-name">
+        ${surah.name}
+      </div>
+
+      <span>
+        ${surah.ayahs.length} ئایەت
+      </span>
+
+    `;
+
+
+    div.onclick =
+      function(){
+
+        openSurah(surah);
+
+      };
+
+
+    list.appendChild(div);
+
+  });
+
+
+  status.innerText =
+    "هەموو سورەتەکان";
+
+
+  window.scrollTo(0,0);
+
 }
 
 
-render();
+
+/* =========================
+   کردنەوەی سورەت
+   ========================= */
+
+function openSurah(surah){
+
+  search.value = "";
+
+  backButton.classList.remove("hidden");
+
+  list.innerHTML = "";
+
+
+  const title =
+    document.createElement("div");
+
+
+  title.className =
+    "title";
+
+
+  title.innerText =
+    surah.name;
+
+
+  list.appendChild(title);
+
+
+
+  surah.ayahs.forEach(function(ayah){
+
+    const div =
+    document.createElement("div");
+
+
+    div.className =
+      "result";
+
+
+    div.innerHTML = `
+
+      <span class="small">
+        ئایەتی ${ayah.numberInSurah}
+      </span>
+
+      <div class="ayah">
+        ${ayah.text}
+      </div>
+
+    `;
+
+
+    list.appendChild(div);
+
+  });
+
+
+  status.innerText =
+    surah.name;
+
+
+  window.scrollTo(0,0);
+
+}
+
+
+
+/* =========================
+   گەڕان
+   ========================= */
+
+function searchQuran(){
+
+  const original =
+    search.value.trim();
+
+
+  /* ئەگەر Search بەتاڵە */
+
+  if(original === ""){
+
+    showSurahs();
+
+    return;
+
+  }
+
+
+  const query =
+    normalizeArabic(original);
+
+
+  list.innerHTML = "";
+
+  backButton.classList.remove("hidden");
+
+
+  let count = 0;
+
+
+
+  /* =========================
+     گەڕان لە ناوی سورەت
+     ========================= */
+
+  quran.forEach(function(surah){
+
+    const name =
+      normalizeArabic(surah.name);
+
+
+    if(name.includes(query)){
+
+      const div =
+      document.createElement("div");
+
+
+      div.className =
+        "result";
+
+
+      div.innerHTML = `
+
+        <span class="small">
+          سورەت
+        </span>
+
+        <div class="surah-name">
+          ${surah.name}
+        </div>
+
+      `;
+
+
+      div.onclick =
+        function(){
+
+          openSurah(surah);
+
+        };
+
+
+      list.appendChild(div);
+
+
+      count++;
+
+    }
+
+  });
+
+
+
+  /* =========================
+     گەڕان لە هەموو ئایەتەکان
+     ========================= */
+
+  quran.forEach(function(surah){
+
+    surah.ayahs.forEach(function(ayah){
+
+      const text =
+        normalizeArabic(ayah.text);
+
+
+      if(text.includes(query)){
+
+        const div =
+        document.createElement("div");
+
+
+        div.className =
+          "result";
+
+
+        div.innerHTML = `
+
+          <span class="small">
+
+            ${surah.name}
+
+            — ئایەتی
+
+            ${ayah.numberInSurah}
+
+          </span>
+
+          <div class="ayah">
+
+            ${ayah.text}
+
+          </div>
+
+        `;
+
+
+        div.onclick =
+          function(){
+
+            openSurah(surah);
+
+          };
+
+
+        list.appendChild(div);
+
+
+        count++;
+
+      }
+
+    });
+
+  });
+
+
+
+  /* =========================
+     ئەگەر هیچ نەدۆزرایەوە
+     ========================= */
+
+  if(count === 0){
+
+    list.innerHTML = `
+
+      <div class="empty">
+
+        هیچ ئەنجامێک نەدۆزرایەوە.
+
+        <br><br>
+
+        وشەی
+
+        <b>${original}</b>
+
+        لە قورئاندا نەدۆزرایەوە.
+
+      </div>
+
+    `;
+
+
+    status.innerText =
+      "هیچ ئەنجامێک نییە";
+
+  }else{
+
+    status.innerText =
+      count + " ئەنجام دۆزرایەوە";
+
+  }
+
+
+  window.scrollTo(0,0);
+
+}
+
+
+
+/* =========================
+   کاتێک لە Search دەنووسیت
+   ========================= */
+
+search.addEventListener(
+  "input",
+  searchQuran
+);
+
+
+
+/* =========================
+   دەستپێکردنی بەرنامە
+   ========================= */
+
+loadQuran();
+
 
 </script>
 
 </body>
+
 </html>
