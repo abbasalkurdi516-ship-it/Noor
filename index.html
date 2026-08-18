@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>نوور | NOOR</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,Tahoma,sans-serif;
+ background:#f5f1e8;
+ color:#26352d;
+}
+header{
+ background:#173d31;
+ color:white;
+ padding:25px 18px;
+ text-align:center;
+}
+header h1{margin:0;font-size:34px}
+header p{margin:8px 0 0;opacity:.85}
+.search{
+ padding:15px;
+ background:white;
+ position:sticky;
+ top:0;
+ z-index:5;
+ box-shadow:0 2px 8px #0001;
+}
+.search input{
+ width:100%;
+ padding:14px;
+ border:1px solid #ddd;
+ border-radius:12px;
+ font-size:16px;
+}
+.container{
+ max-width:800px;
+ margin:auto;
+ padding:18px;
+}
+.surah{
+ background:white;
+ margin:10px 0;
+ padding:17px;
+ border-radius:15px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ box-shadow:0 2px 8px #00000010;
+ cursor:pointer;
+}
+.surah:hover{transform:scale(1.01)}
+.num{
+ background:#173d31;
+ color:white;
+ width:38px;
+ height:38px;
+ border-radius:50%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+.name{font-size:19px;font-weight:bold}
+.detail{
+ display:none;
+ background:white;
+ padding:20px;
+ border-radius:15px;
+ line-height:2.2;
+}
+.back{
+ border:0;
+ background:#173d31;
+ color:white;
+ padding:10px 18px;
+ border-radius:10px;
+ margin-bottom:15px;
+ cursor:pointer;
+}
+.ayah{
+ border-bottom:1px solid #eee;
+ padding:15px 5px;
+ font-size:19px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>☾ نــوور</h1>
+<p>یاریدەدەری ڕۆحی و قورئانی تۆ</p>
+</header>
+
+<div class="search">
+<input id="search" placeholder="گەڕان بە ناوی سورەت..." oninput="searchSurah()">
+</div>
+
+<main class="container">
+
+<div id="list"></div>
+
+<div id="detail" class="detail">
+<button class="back" onclick="showList()">← گەڕانەوە</button>
+<h2 id="title"></h2>
+<div id="ayahs"></div>
+</div>
+
+</main>
+
+<script>
+const surahs=[
+"الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف",
+"الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر",
+"النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون",
+"النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم",
+"لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر",
+"غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف",
+"محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر",
+"الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف",
+"الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم",
+"الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان",
+"المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين",
+"الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد",
+"الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة",
+"الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل",
+"قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص",
+"الفلق","الناس"
+];
+
+const list=document.getElementById("list");
+const detail=document.getElementById("detail");
+
+function render(data=surahs){
+ list.innerHTML="";
+ data.forEach((name,i)=>{
+  const div=document.createElement("div");
+  div.className="surah";
+  div.innerHTML=
+   `<span class="name">${name}</span>
+    <span class="num">${surahs.indexOf(name)+1}</span>`;
+  div.onclick=()=>openSurah(name);
+  list.appendChild(div);
+ });
+}
+
+function searchSurah(){
+ const q=document.getElementById("search").value.trim();
+ render(surahs.filter(x=>x.includes(q)));
+}
+
+function openSurah(name){
+ list.style.display="none";
+ document.querySelector(".search").style.display="none";
+ detail.style.display="block";
+ document.getElementById("title").textContent="سورەتی "+name;
+
+ document.getElementById("ayahs").innerHTML=
+ `<div class="ayah">
+ ئەمە وەشانی سەرەتایی بەرنامەی نوورە.
+ </div>
+ <div class="ayah">
+ لە وەشانی تەواودا دەقی تەواوی ئایەتەکانی ئەم سورەتە لێرە پیشان دەدرێت.
+ </div>`;
+ window.scrollTo(0,0);
+}
+
+function showList(){
+ detail.style.display="none";
+ list.style.display="block";
+ document.querySelector(".search").style.display="block";
+}
+
+render();
+</script>
+
+</body>
+</html>
