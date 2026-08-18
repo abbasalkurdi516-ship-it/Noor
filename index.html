@@ -2,103 +2,97 @@
 <html lang="ku" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>نوور | NOOR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noor</title>
+
 <style>
-*{box-sizing:border-box}
 body{
  margin:0;
- font-family:Arial,Tahoma,sans-serif;
- background:#f5f1e8;
- color:#26352d;
+ font-family:Arial,sans-serif;
+ background:#f5f5f5;
+ color:#222;
 }
+
 header{
- background:#173d31;
+ background:#176b4d;
  color:white;
- padding:25px 18px;
+ padding:20px;
  text-align:center;
+ font-size:26px;
+ font-weight:bold;
 }
-header h1{margin:0;font-size:34px}
-header p{margin:8px 0 0;opacity:.85}
+
 .search{
  padding:15px;
- background:white;
- position:sticky;
- top:0;
- z-index:5;
- box-shadow:0 2px 8px #0001;
 }
-.search input{
+
+#search{
  width:100%;
+ box-sizing:border-box;
  padding:14px;
- border:1px solid #ddd;
- border-radius:12px;
- font-size:16px;
+ border:1px solid #ccc;
+ border-radius:10px;
+ font-size:18px;
 }
-.container{
- max-width:800px;
- margin:auto;
- padding:18px;
+
+#list{
+ padding:10px;
 }
+
 .surah{
  background:white;
- margin:10px 0;
+ margin:8px 0;
  padding:17px;
- border-radius:15px;
+ border-radius:10px;
  display:flex;
  justify-content:space-between;
- align-items:center;
- box-shadow:0 2px 8px #00000010;
  cursor:pointer;
+ font-size:20px;
+ box-shadow:0 1px 4px #ddd;
 }
-.surah:hover{transform:scale(1.01)}
+
 .num{
- background:#173d31;
- color:white;
- width:38px;
- height:38px;
- border-radius:50%;
- display:flex;
- align-items:center;
- justify-content:center;
+ color:#176b4d;
+ font-weight:bold;
 }
-.name{font-size:19px;font-weight:bold}
+
 .detail{
  display:none;
- background:white;
- padding:20px;
- border-radius:15px;
- line-height:2.2;
+ padding:15px;
 }
+
 .back{
- border:0;
- background:#173d31;
+ background:#176b4d;
  color:white;
- padding:10px 18px;
- border-radius:10px;
- margin-bottom:15px;
- cursor:pointer;
+ border:0;
+ padding:12px 18px;
+ border-radius:8px;
+ font-size:17px;
 }
+
+#title{
+ text-align:center;
+}
+
 .ayah{
- border-bottom:1px solid #eee;
- padding:15px 5px;
- font-size:19px;
+ background:white;
+ margin:12px 0;
+ padding:20px;
+ border-radius:10px;
+ font-size:23px;
+ line-height:2;
+ text-align:right;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>☾ نــوور</h1>
-<p>یاریدەدەری ڕۆحی و قورئانی تۆ</p>
-</header>
+<header>📖 نوور</header>
 
 <div class="search">
 <input id="search" placeholder="گەڕان بە ناوی سورەت..." oninput="searchSurah()">
 </div>
-
-<main class="container">
 
 <div id="list"></div>
 
@@ -108,10 +102,9 @@ header p{margin:8px 0 0;opacity:.85}
 <div id="ayahs"></div>
 </div>
 
-</main>
-
 <script>
-const surahs=[
+
+const surahs = [
 "الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف",
 "الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر",
 "النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون",
@@ -130,38 +123,54 @@ const surahs=[
 "الفلق","الناس"
 ];
 
-const list=document.getElementById("list");
-const detail=document.getElementById("detail");
-function render(data=surahs){
- list.innerHTML="";
+const list = document.getElementById("list");
+const detail = document.getElementById("detail");
+
+function render(data = surahs){
+
+ list.innerHTML = "";
 
  data.forEach((name,i)=>{
-  const div=document.createElement("div");
-  div.className="surah";
 
-  div.innerHTML=
-   `<span class="name">${name}</span>
-    <span class="num">${surahs.indexOf(name)+1}</span>`;
+  const div = document.createElement("div");
 
-  div.onclick=()=>openSurah(name);
+  div.className = "surah";
+
+  div.innerHTML =
+  `<span>${name}</span>
+   <span class="num">${i+1}</span>`;
+
+  div.onclick = function(){
+   openSurah(name);
+  };
+
   list.appendChild(div);
+
  });
 }
 
 function searchSurah(){
- const q=document.getElementById("search").value.trim();
- render(surahs.filter(x=>x.includes(q)));
+
+ const q = document.getElementById("search").value.trim();
+
+ render(
+  surahs.filter(name => name.includes(q))
+ );
+
 }
 
 function openSurah(name){
- list.style.display="none";
- document.querySelector(".search").style.display="none";
- detail.style.display="block";
 
- document.getElementById("title").textContent="سورەتی "+name;
+ list.style.display = "none";
+ document.querySelector(".search").style.display = "none";
+ detail.style.display = "block";
 
- const ayahs={
-  "الفاتحة":[
+ document.getElementById("title").textContent =
+ "سورەتی " + name;
+
+ if(name === "الفاتحة"){
+
+  const verses = [
    "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
    "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
    "الرَّحْمَٰنِ الرَّحِيمِ",
@@ -169,28 +178,36 @@ function openSurah(name){
    "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
    "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
    "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ"
-  ]
- };
+  ];
 
- const verses=ayahs[name];
+  document.getElementById("ayahs").innerHTML =
+  verses.map((ayah,i)=>
+   `<div class="ayah">${ayah} ﴿${i+1}﴾</div>`
+  ).join("");
 
- if(verses){
-  document.getElementById("ayahs").innerHTML=
-   verses.map((ayah,i)=>
-    `<div class="ayah">${ayah} <span>﴿${i+1}﴾</span></div>`
-   ).join("");
  }else{
-  document.getElementById("ayahs").innerHTML=
-   `<div class="ayah">دەقی ئەم سورەتە هێشتا زیاد نەکراوە.</div>`;
+
+  document.getElementById("ayahs").innerHTML =
+  `<div class="ayah">
+   دەقی ئەم سورەتە هێشتا زیاد نەکراوە.
+  </div>`;
+
  }
 
  window.scrollTo(0,0);
 }
 
 function showList(){
- detail.style.display="none";
- list.style.display="block";
- document.querySelector(".search").style.display="block";
+
+ detail.style.display = "none";
+ list.style.display = "block";
+ document.querySelector(".search").style.display = "block";
+
 }
 
 render();
+
+</script>
+
+</body>
+</html>
