@@ -133,7 +133,28 @@ const surahs=[
 const list=document.getElementById("list");
 const detail=document.getElementById("detail");
 
-function render(data=surahs){
+function render(data=surahs){function openSurah(name){
+ list.style.display="none";
+ document.querySelector(".search").style.display="none";
+ detail.style.display="block";
+
+ document.getElementById("title").textContent="سورەتی "+name;
+
+ document.getElementById("ayahs").innerHTML =
+   `<div class="ayah">
+     دەقی ئەم سورەتە لەم وەشانەدا هێشتا زیاد نەکراوە.
+   </div>`;
+
+ window.scrollTo(0,0);
+}
+
+function showList(){
+ detail.style.display="none";
+ list.style.display="block";
+ document.querySelector(".search").style.display="block";
+}
+
+render();
  list.innerHTML="";
  data.forEach((name,i)=>{
   const div=document.createElement("div");
