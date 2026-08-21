@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="110" fill="#0d6b52"/>
+  <circle cx="256" cy="256" r="170" fill="#ffffff" opacity="0.12"/>
+  <path d="M145 170h170c28 0 52 23 52 52v130c0 16-13 29-29 29H174c-16 0-29-13-29-29V170z"
+        fill="#ffffff"/>
+  <path d="M256 170v211"
+        stroke="#0d6b52"
+        stroke-width="12"
+        stroke-linecap="round"/>
+  <path d="M165 190h75c9 0 16 7 16 16v145c-10-8-23-12-37-12h-54V190z"
+        fill="#e8f3ef"/>
+  <path d="M347 190h-75c-9 0-16 7-16 16v145c10-8 23-12 37-12h54V190z"
+        fill="#e8f3ef"/>
+  <text x="256" y="445"
+        text-anchor="middle"
+        font-family="Arial, Tahoma, sans-serif"
+        font-size="46"
+        font-weight="bold"
+        fill="#ffffff">نور</text>
+</svg>
